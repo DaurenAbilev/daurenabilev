@@ -3,11 +3,19 @@ name: Send daily Telegram message
 on:
   schedule:
     - cron: "0 4 * * *"        # 10:00 Asia/Qostanay
-    - cron: "0 7 * * *"      # test 
     - cron: "0 7 29 12 *"      # 13:00 Asia/Qostanay on Dec 29
     - cron: "0 12 29 12 *"     # 18:00 Asia/Qostanay on Dec 29
     - cron: "0 15 29 12 *"     # 21:00 Asia/Qostanay on Dec 29
   workflow_dispatch:
+    inputs:
+      test_date:
+        description: "YYYY-MM-DD (optional). Например: 2025-12-29"
+        required: false
+        default: ""
+      test_hour:
+        description: "0-23 (optional). Например: 10"
+        required: false
+        default: ""
 
 jobs:
   send:
@@ -24,4 +32,6 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
+          TEST_DATE: ${{ github.event.inputs.test_date }}
+          TEST_HOUR: ${{ github.event.inputs.test_hour }}
         run: python happy_birthday_anara/send_daily.py
