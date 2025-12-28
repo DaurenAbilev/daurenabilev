@@ -84,10 +84,51 @@ def send_message(token: str, chat_id: str, text: str) -> None:
 
     print("sent ok")
 
+def get_test_now(tz: ZoneInfo) -> datetime | None:
+    """
+    Optional test override via env:
+      TEST_DATE=YYYY-MM-DD
+      TEST_HOUR=0..23
+    If only TEST_DATE is set, hour defaults to 10.
+    If only TEST_HOUR is set, date defaults to today's local date.
+    """
+    test_date_raw = os.getenv("TEST_DATE", "").strip()
+    test_hour_raw = os.getenv("TEST_HOUR", "").strip()
+
+    if not test_date_raw and not test_hour_raw:
+        return None
+
+    # Base date
+    if test_date_raw:
+        try:
+            d = date.fromisoformat(test_date_raw)
+        except ValueError:
+            print("Error: TEST_DATE must be in YYYY-MM-DD format.", file=sys.stderr)
+            sys.exit(1)
+    else:
+        d = datetime.now(tz).date()
+
+    # Base hour
+    if test_hour_raw:
+        try:
+            h = int(test_hour_raw)
+        except ValueError:
+            print("Error: TEST_HOUR must be an integer 0..23.", file=sys.stderr)
+            sys.exit(1)
+        if not (0 <= h <= 23):
+            print("Error: TEST_HOUR must be in range 0..23.", file=sys.stderr)
+            sys.exit(1)
+    else:
+        h = 10
+
+    return datetime(d.year, d.month, d.day, h, 0, 0, tzinfo=tz)
+
+
 
 def main() -> None:
     token, chat_id = load_settings()
-    now = datetime.now(TIMEZONE)
+    test_now = get_test_now(TIMEZONE)
+    now = test_now or datetime.now(TIMEZONE)
     message = pick_message(now)
     send_message(token, chat_id, message)
 
