@@ -2,11 +2,11 @@ name: Send daily Telegram message
 
 on:
   schedule:
-    - cron: "0 4 * * *"        # 10:00 Asia/Qostanay
-    - cron: "*/5 * * * *"
-    - cron: "0 7 29 12 *"      # 13:00 Asia/Qostanay on Dec 29
-    - cron: "0 12 29 12 *"     # 18:00 Asia/Qostanay on Dec 29
-    - cron: "0 15 29 12 *"     # 21:00 Asia/Qostanay on Dec 29
+    - cron: "0 5 * * *"        # 10:00 Asia/Qostanay
+    - cron: "0 8 29 12 *"      # 13:00 Asia/Qostanay on Dec 29
+    - cron: "0 13 29 12 *"     # 18:00 Asia/Qostanay on Dec 29
+    - cron: "0 16 29 12 *"     # 21:00 Asia/Qostanay on Dec 29
+    
   workflow_dispatch:
     inputs:
       test_date:
