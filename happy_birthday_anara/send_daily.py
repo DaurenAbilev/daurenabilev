@@ -14,7 +14,7 @@ from content import (
     generate_daily_message,
 )
 
-START_DATE = date(2025, 12, 29) # нужно внести изменения 
+START_DATE = date(2025, 12, 28) # нужно внести изменения 
 TOTAL_DAYS = 365
 TIMEZONE = ZoneInfo("Asia/Qostanay")
 
