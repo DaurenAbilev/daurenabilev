@@ -1,0 +1,62 @@
+Hourly task
+
+log-returns → EWMA Z-score + CUSUM
+
+INPUT:
+  pair = "EURUSD" (пример)
+  lambda = 0.1              # EWMA память
+  z_threshold = 3.0         # алерт по силе
+  cooldown_hours = 3        # антиспам
+  min_points = 50           # минимум истории, чтобы доверять статистике
+
+LOAD:
+  dataset (история цен/returns)
+  state (последний ewma_mean, ewma_var, last_alert_time)
+
+STEP 1: FETCH PRICE
+  P_t = get_price_from_api(pair)
+  append P_t to prices
+
+STEP 2: COMPUTE RETURN
+  if have at least 2 prices:
+      r_t = ln(P_t / P_{t-1})
+      append r_t to returns
+
+STEP 3: UPDATE EWMA STATS (только если есть r_t)
+  # EWMA mean
+  mu_t = lambda * r_t + (1-lambda) * mu_prev
+
+  # EWMA variance (упрощённо, идея: дисперсия тоже сглаживается)
+  err = r_t - mu_t
+  var_t = lambda * err^2 + (1-lambda) * var_prev
+  sigma_t = sqrt(var_t + eps)
+
+STEP 4: Z-SCORE
+  z_t = (r_t - mu_t) / sigma_t
+
+STEP 5: COOLDOWN CHECK
+  in_cooldown = (now - last_alert_time) < cooldown_hours
+
+STEP 6: ALERT LOGIC
+  if len(returns) >= min_points AND |z_t| >= z_threshold AND NOT in_cooldown:
+       send_alert("Strong FX move", details: P_t, r_t, z_t)
+       last_alert_time = now
+
+STEP 7: PERSIST
+  save updated prices/returns
+  save state (mu_t, var_t, last_alert_time)
+
+OUTPUT:
+  either "ALERT SENT" or "no alert"
+
+Daily task
+
+LOAD dataset for last 24h
+
+Compute:
+  count_alerts
+  max |z|
+  top 3 moves (by |r| or |z|)
+  optional: volatility estimate (std of returns)
+
+send_summary(message)
