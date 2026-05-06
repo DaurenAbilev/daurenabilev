@@ -1,0 +1,1 @@
+"""Gym booking bot package."""
