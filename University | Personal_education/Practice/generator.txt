@@ -1,0 +1,2 @@
+Hello my name is Dauren, this file is needed to check how many time will i say generator. Actually generator is not a specific word, just as in example. 
+Important to note that I Actually just need to find generator index not number of it. Hope you understand it correctly. 
