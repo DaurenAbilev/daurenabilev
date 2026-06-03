@@ -38,7 +38,7 @@ def get_env_variables():
 
 def get_lowest_prices(DateOut, DateIn, Origin, Destination, RYANAIR_COOKIE):
 
-    url = "https://www.ryanair.com/api/booking/v4/en-fi/availability?"    
+    url = "https://www.ryanair.com/api/booking/v4/en-fi/availability"    
 
     params = {
         "ADT": 1,
@@ -52,15 +52,20 @@ def get_lowest_prices(DateOut, DateIn, Origin, Destination, RYANAIR_COOKIE):
     }
 
     headers = {
-        'client-version': '3.200.0',
+        'client-version': '3.201.0',
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36',
         'Cookie': RYANAIR_COOKIE
     }
 
     try:
         response = requests.get(url=url, params=params, headers=headers,timeout=(10,20), verify=False)
+        
+        print("URL:", response.url)
+        print("STATUS:", response.status_code)
+        #print("TEXT:", response.text)
+
         response.raise_for_status()
-        print(f"Актуальный статус код: {response.status_code}")
+
     except requests.exceptions.ConnectTimeout:
         print(f"Connect timeout count")
         return None
