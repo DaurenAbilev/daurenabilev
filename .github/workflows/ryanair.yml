@@ -2,8 +2,7 @@ name: Run Ryanair Parser
 
 on:
   schedule:
-    - cron: "0 5 * * *"   # каждый день в 08:00 UTC
-    - cron: "0 14 * * *"   # каждый день в 08:00 UTC
+    - cron: "0 6,11,16,21 * * *"
   workflow_dispatch:       # позволяет запускать вручную кнопкой
 
 jobs:
