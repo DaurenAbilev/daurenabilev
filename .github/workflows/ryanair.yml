@@ -29,6 +29,7 @@ jobs:
           API_HASH: ${{ secrets.API_HASH }}
           USER_ID: ${{ secrets.USER_ID }}
           RYANAIR_COOKIE: ${{ secrets.RYANAIR_COOKIE }}
+          STRING_SESSION: ${{ secrets.STRING_SESSION }}
 
         run: |
           python Projects/ryanair_parcer/ryanair_parcer.py 

@@ -6,6 +6,7 @@ import os
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 import asyncio
+from telethon.sessions import StringSession
 
 def get_env_variables():
 
@@ -15,6 +16,7 @@ def get_env_variables():
     API_HASH = os.getenv("API_HASH")
     USER_ID = os.getenv("USER_ID")
     RYANAIR_COOKIE = os.getenv("RYANAIR_COOKIE")
+    STRING_SESSION = os.getenv("STRING_SESSION")
 
     if not API_ID:
         raise ValueError("API_ID is missing")
@@ -23,11 +25,15 @@ def get_env_variables():
     if not USER_ID:
         raise ValueError("USER_ID is missing")
     if not RYANAIR_COOKIE:
-        raise RYANAIR_COOKIE("RYANAIR_COOKIE is missing")
+        raise ValueError("RYANAIR_COOKIE is missing")
+    if not STRING_SESSION:
+        raise ValueError("STRING_SESSION is missing")
+    
+    
 
     API_ID = int(API_ID)
 
-    return  API_ID, API_HASH, USER_ID, RYANAIR_COOKIE
+    return  API_ID, API_HASH, USER_ID, RYANAIR_COOKIE, STRING_SESSION
 
 
 def get_lowest_prices(DateOut, DateIn, Origin, Destination, RYANAIR_COOKIE):
@@ -103,20 +109,20 @@ def get_lowest_prices(DateOut, DateIn, Origin, Destination, RYANAIR_COOKIE):
     from_1 = list(prices.items())[-2:]
     return to_1, from_1   
 
-async def _async_send(API_ID, API_HASH, USER_ID, text):
-    async with TelegramClient('session_name', API_ID, API_HASH) as client:
+async def _async_send(API_ID, API_HASH, USER_ID, STRING_SESSION, text):
+    async with TelegramClient(StringSession(STRING_SESSION), API_ID, API_HASH) as client:
         await client.send_message(USER_ID, text)
 
-def send_telegram_notification(API_ID, API_HASH, USER_ID, text):
+def send_telegram_notification(API_ID, API_HASH, USER_ID, STRING_SESSION, text):
     try:
-        asyncio.run(_async_send(API_ID, API_HASH, USER_ID, text))
+        asyncio.run(_async_send(API_ID, API_HASH, USER_ID, STRING_SESSION, text))
         print("📱 Уведомление успешно отправлено в Telegram!")
     except Exception as e:
         print(f"❌ Ошибка при отправке в Telegram: {e}")
 
 def main():
 
-    API_ID, API_HASH, USER_ID, RYANAIR_COOKIE = get_env_variables()
+    API_ID, API_HASH, USER_ID, RYANAIR_COOKIE, STRING_SESSION = get_env_variables()
 
     to_1, from_1 = get_lowest_prices("2026-06-20T00:00:00.000", "2026-06-23T00:00:00.000", "ROM", "CTA", RYANAIR_COOKIE)
     to_2, from_2 = get_lowest_prices("2026-06-21T00:00:00.000", "2026-06-24T00:00:00.000", "ROM", "CTA", RYANAIR_COOKIE)
@@ -148,7 +154,7 @@ def main():
     text = to_1_message + "\n" + from_1_message
     print(text)
 
-    send_telegram_notification(API_ID, API_HASH, USER_ID, text)
+    send_telegram_notification(API_ID, API_HASH, USER_ID, STRING_SESSION, text)
     
 
 main()
