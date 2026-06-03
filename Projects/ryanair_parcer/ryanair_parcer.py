@@ -127,29 +127,29 @@ def main():
     to_1, from_1 = get_lowest_prices("2026-06-20T00:00:00.000", "2026-06-23T00:00:00.000", "ROM", "CTA", RYANAIR_COOKIE)
     to_2, from_2 = get_lowest_prices("2026-06-21T00:00:00.000", "2026-06-24T00:00:00.000", "ROM", "CTA", RYANAIR_COOKIE)
 
-    to_1_message = "Билеты в Мессину:\n"
+    to_1_message = "✈️ Рим → Катания\n"
 
     for datetime_str, amount in to_1:
         time_only = datetime_str[11:16] 
-        date_only = datetime_str[:10]
-        to_1_message += f"📅 {date_only} | ⏰ {time_only} | 💰 {amount} EUR\n"
+        date_only = datetime_str[5:10]
+        to_1_message += f"{date_only} {time_only} - {amount}€.\n"
 
-    from_1_message = "Билеты из Мессину:\n"
+    from_1_message = "✈️ Катания → Рим\n"
 
     for datetime_str, amount in from_1:
         time_only = datetime_str[11:16] 
-        date_only = datetime_str[:10]
-        from_1_message += f"📅 {date_only} | ⏰ {time_only} | 💰 {amount} EUR\n"
+        date_only = datetime_str[5:10]
+        from_1_message += f"{date_only} {time_only} - {amount}€.\n"
 
     for datetime_str, amount in to_2:
         time_only = datetime_str[11:16] 
-        date_only = datetime_str[:10]
-        to_1_message += f"📅 {date_only} | ⏰ {time_only} | 💰 {amount} EUR\n"
+        date_only = datetime_str[5:10]
+        to_1_message += f"{date_only} {time_only} - {amount}€.\n"
 
     for datetime_str, amount in from_2:
         time_only = datetime_str[11:16] 
-        date_only = datetime_str[:10]
-        from_1_message += f"📅 {date_only} | ⏰ {time_only} | 💰 {amount} EUR\n"
+        date_only = datetime_str[5:10]
+        from_1_message += f"{date_only} {time_only} - {amount}€.\n"
 
     text = to_1_message + "\n" + from_1_message
     print(text)
