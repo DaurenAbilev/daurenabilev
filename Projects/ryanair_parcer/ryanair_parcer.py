@@ -131,25 +131,25 @@ def main():
 
     for datetime_str, amount in to_1:
         time_only = datetime_str[11:16] 
-        date_only = datetime_str[5:10]
-        to_1_message += f"{date_only} {time_only} - {amount}€.\n"
+        date_only = datetime_str[:10]
+        to_1_message += f"{date_only} | {time_only} | {amount}€\n"
 
     from_1_message = "✈️ Катания → Рим\n"
 
     for datetime_str, amount in from_1:
         time_only = datetime_str[11:16] 
-        date_only = datetime_str[5:10]
-        from_1_message += f"{date_only} {time_only} - {amount}€.\n"
+        date_only = datetime_str[:10]
+        from_1_message += f"{date_only} | {time_only} | {amount}€\n"
 
     for datetime_str, amount in to_2:
         time_only = datetime_str[11:16] 
-        date_only = datetime_str[5:10]
-        to_1_message += f"{date_only} {time_only} - {amount}€.\n"
+        date_only = datetime_str[:10]
+        to_1_message += f"{date_only} | {time_only} | {amount}€\n"
 
     for datetime_str, amount in from_2:
         time_only = datetime_str[11:16] 
-        date_only = datetime_str[5:10]
-        from_1_message += f"{date_only} {time_only} - {amount}€.\n"
+        date_only = datetime_str[:10]
+        from_1_message += f"{date_only} | {time_only} | {amount}€\n"
 
     text = to_1_message + "\n" + from_1_message
     print(text)
