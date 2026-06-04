@@ -3,10 +3,10 @@ import asyncio
 from dotenv import load_dotenv
 import os
 import json
+from telethon.sessions import StringSession
 
 TARGET_CHAT = "@qa_vacancy_parcing"
 STATE_FILE = "channel_state.json"
-SESSION = "session_name"
 
 QA_KEYWORDS = [
     "qa",
@@ -63,17 +63,20 @@ def get_env_variables():
 
     API_ID = os.getenv("API_ID")
     API_HASH = os.getenv("API_HASH")
+    STRING_SESSION = os.getenv("STRING_SESSION")
 
     if not API_ID:
         raise ValueError("API_ID is missing")
     if not API_HASH:
         raise ValueError("API_HASH is missing")
+    if not STRING_SESSION:
+        raise ValueError("STRING_SESSION is missing")    
 
     API_ID = int(API_ID)
 
-    return  API_ID, API_HASH
+    return  API_ID, API_HASH, STRING_SESSION
 
-API_ID, API_HASH = get_env_variables() # API_ID API_HASH можно получить через сайт тг 
+API_ID, API_HASH, STRING_SESSION = get_env_variables() # API_ID API_HASH можно получить через сайт тг 
 
 
 
@@ -127,9 +130,10 @@ def is_relevant_vacancy(text):
 
 
 async def main():
+
     state = load_state()
 
-    async with TelegramClient(SESSION, API_ID, API_HASH) as client:
+    async with TelegramClient(StringSession(STRING_SESSION), API_ID, API_HASH) as client:
         for channel in CHANNELS:
 
             initialized = await init_channel_if_needed(client, channel, state)
