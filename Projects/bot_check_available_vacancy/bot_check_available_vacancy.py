@@ -40,7 +40,6 @@ CHANNELS = [
     "@easy_qa_jobs",
     "@remote_jobs_relocate",
     "@zarubezhom_jobs",
-    "@jobs_in_it_remoute",
     "@HRTech_Jobs",
     "@it_jobs_agregator",
     "@revacancy",
@@ -54,6 +53,8 @@ CHANNELS = [
     "@jun_qa",
     "@itvacancykz",
     "@jobfortm",
+    "@aitujobs",
+
 
 ]
 
