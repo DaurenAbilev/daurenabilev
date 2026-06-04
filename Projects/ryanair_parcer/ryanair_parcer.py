@@ -29,8 +29,6 @@ def get_env_variables():
     if not STRING_SESSION:
         raise ValueError("STRING_SESSION is missing")
     
-    
-
     API_ID = int(API_ID)
 
     return  API_ID, API_HASH, USER_ID, RYANAIR_COOKIE, STRING_SESSION
