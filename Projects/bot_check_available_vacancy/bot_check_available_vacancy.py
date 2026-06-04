@@ -148,7 +148,7 @@ async def main():
 
             if not new_messages:
                 print(f"{channel}: новых сообщений нет")
-                await client.send_message(TARGET_CHAT, f"{channel}: новых сообщений нет")
+                #await client.send_message(TARGET_CHAT, f"{channel}: новых сообщений нет")
                 continue
 
             print(f"{channel}: найдено {len(new_messages)} новых сообщений")
