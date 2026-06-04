@@ -1,4 +1,4 @@
-name: Run Ryanair Parser
+name: Run Available Vacancy check
 
 on:
   schedule:
