@@ -54,7 +54,10 @@ CHANNELS = [
     "@itvacancykz",
     "@jobfortm",
     "@aitujobs",
-
+    "@datajobschannel",
+    "@analitiki_rabota",
+    "@data_analysis_jobs",
+    "@jtbl_vacancy",
 
 ]
 
