@@ -50,7 +50,7 @@ def get_lowest_prices(DateOut, DateIn, Origin, Destination, RYANAIR_COOKIE):
     }
 
     headers = {
-        'client-version': '3.201.0',
+        'client-version': '3.202.0', 
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36',
         'Cookie': RYANAIR_COOKIE
     }
