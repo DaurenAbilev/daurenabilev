@@ -62,10 +62,10 @@ CHANNELS = [
     "runello_rus_datascience",
     "foranalysts",
     "JobOfferInside",
-    "nodatanojobs"
+    "nodatanojobs",
     "remote_kazakhstan",
     "data_hr",
-    "vacancy_cs"
+    "vacancy_cs",
 ]
 
 def get_env_variables():
