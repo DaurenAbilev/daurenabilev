@@ -58,7 +58,14 @@ CHANNELS = [
     "@analitiki_rabota",
     "@data_analysis_jobs",
     "@jtbl_vacancy",
-
+    "itcom_kz",
+    "runello_rus_datascience",
+    "foranalysts",
+    "JobOfferInside",
+    "nodatanojobs"
+    "remote_kazakhstan",
+    "data_hr",
+    "vacancy_cs"
 ]
 
 def get_env_variables():
