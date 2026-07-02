@@ -50,7 +50,6 @@ CHANNELS = [
     "@Remoteit",
     "@newdirections",
     "@refer_me_it",
-    "@jun_qa",
     "@itvacancykz",
     "@jobfortm",
     "@aitujobs",
