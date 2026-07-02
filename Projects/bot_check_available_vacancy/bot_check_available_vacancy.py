@@ -26,7 +26,17 @@ EXCLUDE_SENIOR = [
     "lead",
     "principal",
     "qa manager",
-    "head of qa"
+    "head of qa",
+    "Только РФ", 
+    "Москва", 
+    "РФ", 
+    "РБ", 
+    "Минск", 
+    "Russia", 
+    "Casion", 
+    "Backend Engineer", 
+    ".Net Developer", 
+    "Business Analyst"
 ]
 
 EXCLUDE_JAVA_AQA = [
