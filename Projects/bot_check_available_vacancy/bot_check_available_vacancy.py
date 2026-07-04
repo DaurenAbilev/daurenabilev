@@ -20,7 +20,7 @@ QA_KEYWORDS = [
     "aqa"
 ]
 
-EXCLUDE_SENIOR = [
+EXCLUDE = [
     "senior",
     "sr",
     "lead",
@@ -36,14 +36,15 @@ EXCLUDE_SENIOR = [
     "Casion", 
     "Backend Engineer", 
     ".Net Developer", 
-    "Business Analyst"
-]
-
-EXCLUDE_JAVA_AQA = [
+    "Business Analyst",
     "aqa java",
     "automation java",
     "selenium java",
-    "java test automation"
+    "java test automation",
+    "Business Analyst", 
+    "AI Product Analyst",  
+    "Только РФ", 
+    "Python Developer" 
 ]
 
 CHANNELS = [
@@ -140,10 +141,7 @@ def is_relevant_vacancy(text):
     if not any(k in text for k in QA_KEYWORDS):
         return False
 
-    if any(k in text for k in EXCLUDE_SENIOR):
-        return False
-
-    if any(k in text for k in EXCLUDE_JAVA_AQA):
+    if any(k in text for k in EXCLUDE):
         return False
 
     return True
