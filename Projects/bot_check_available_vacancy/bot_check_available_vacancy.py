@@ -48,7 +48,6 @@ EXCLUDE = [
 ]
 
 CHANNELS = [
-    "@easy_qa_jobs",
     "@remote_jobs_relocate",
     "@zarubezhom_jobs",
     "@HRTech_Jobs",
@@ -76,6 +75,9 @@ CHANNELS = [
     "remote_kazakhstan",
     "data_hr",
     "vacancy_cs",
+    "jobforqaх", 
+    "qajobsoffers",
+    "pythonrabota"
 ]
 
 def get_env_variables():
