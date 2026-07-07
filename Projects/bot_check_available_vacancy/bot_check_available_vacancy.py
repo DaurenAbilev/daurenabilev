@@ -45,6 +45,9 @@ EXCLUDE = [
     "AI Product Analyst",  
     "Только РФ", 
     "Python Developer" 
+    "1C",
+    "1c"
+
 ]
 
 CHANNELS = [
@@ -75,7 +78,6 @@ CHANNELS = [
     "remote_kazakhstan",
     "data_hr",
     "vacancy_cs",
-    "jobforqaх", 
     "qajobsoffers",
     "pythonrabota"
 ]
