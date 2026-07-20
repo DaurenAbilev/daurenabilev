@@ -5,7 +5,8 @@ import os
 import json
 from telethon.sessions import StringSession
 
-TARGET_CHAT = "@qa_vacancy_parcing"
+TARGET_CHAT_QA = "@qa_vacancy_parcing"
+TARGET_CHAT_DATA = "@data_vacancy_parcing"
 STATE_FILE = "channel_state.json"
 
 QA_KEYWORDS = [
@@ -20,7 +21,7 @@ QA_KEYWORDS = [
     "aqa"
 ]
 
-EXCLUDE = [
+QA_EXCLUDE = [
     "senior",
     "sr",
     "lead",
@@ -47,6 +48,73 @@ EXCLUDE = [
     "python",
     "ai integrator",
     "java",
+]
+
+DATA_KEYWORDS = [
+    # Data Analyst
+    "data analyst",
+    "аналитик данных",
+    "data analytics",
+    "product analyst",
+    "bi analyst",
+    "business intelligence analyst",
+    "sql analyst",
+
+    # Data Science
+    "data scientist",
+    "data science",
+    "датасаентист",
+    "дата саентист",
+
+    # ML
+    "machine learning",
+    "ml engineer",
+    "machine learning engineer",
+    "mlops",
+    "ai engineer",
+
+    # DevOps
+    "devops",
+    "devops engineer",
+    "site reliability engineer",
+    "sre",
+    "platform engineer"
+]
+
+DATA_EXCLUDE = [
+    # Уровень
+    "middle",
+    "mid",
+    "senior",
+    "sr",
+    "lead",
+    "principal",
+    "staff",
+    "head",
+    "manager",
+
+    # География
+    "только рф",
+    "москва",
+    "рф",
+    "рб",
+    "минск",
+    "russia",
+
+    # Неинтересные направления
+    "backend engineer",
+    "frontend",
+    "fullstack",
+    "java developer",
+    "python developer",
+    ".net developer",
+    "golang",
+    "php",
+    "1c",
+    "qa",
+    "test engineer",
+    "tester",
+    "casino"
 ]
 
 CHANNELS = [
@@ -137,14 +205,26 @@ async def get_new_messages(client, channel, last_message_id):
     messages.reverse()  # чтобы были от старых к новым
     return messages
 
-def is_relevant_vacancy(text):
+def is_relevant_vacancy_qa(text):
 
     text = text.lower()
 
     if not any(k in text for k in QA_KEYWORDS):
         return False
 
-    if any(k in text for k in EXCLUDE):
+    if any(k in text for k in QA_EXCLUDE):
+        return False
+
+    return True
+
+def is_relevant_vacancy_data(text):
+
+    text = text.lower()
+
+    if not any(k in text for k in DATA_KEYWORDS):
+        return False
+
+    if any(k in text for k in DATA_EXCLUDE):
         return False
 
     return True
@@ -160,7 +240,7 @@ async def main():
             initialized = await init_channel_if_needed(client, channel, state)
 
             if initialized:
-                await client.send_message(TARGET_CHAT, f"{channel}: первый запуск, старые сообщения пропущены")
+                #await client.send_message(TARGET_CHAT_QA, f"{channel}: первый запуск, старые сообщения пропущены")
                 save_state(state)
                 continue
             
@@ -180,8 +260,11 @@ async def main():
                 text = (message.message or "").lower()
                 print(f"[{message.id}] {text}")
 
-                if is_relevant_vacancy(text):
-                    await client.forward_messages(TARGET_CHAT, message)
+                if is_relevant_vacancy_qa(text):
+                    await client.forward_messages(TARGET_CHAT_QA, message)
+
+                if is_relevant_vacancy_data(text):
+                    await client.forward_messages(TARGET_CHAT_DATA, message)
 
                 if message.id > max_id:
                     max_id = message.id
