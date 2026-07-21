@@ -1,9 +1,10 @@
 from telethon import TelegramClient
-import asyncio
+from telethon.sessions import StringSession
 from dotenv import load_dotenv
+
+import asyncio
 import os
 import json
-from telethon.sessions import StringSession
 
 TARGET_CHAT_QA = "@qa_vacancy_parcing"
 TARGET_CHAT_DATA = "@data_vacancy_parcing"
@@ -11,80 +12,114 @@ STATE_FILE = "channel_state.json"
 
 QA_KEYWORDS = [
     "qa",
-    "test engineer",
-    "tester",
-    "testing",
-    "тестировщик",
     "qa engineer",
     "manual qa",
     "automation qa",
-    "aqa"
+    "aqa",
+    "test engineer",
+    "software tester",
+    "tester",
+    "testing",
+    "тестировщик",
+    "инженер по тестированию",
 ]
 
 QA_EXCLUDE = [
-    "senior",
-    "sr",
-    "lead",
-    "principal",
+
+    "senior qa",
+    "sr qa",
+    "lead qa",
+    "qa lead",
+    "principal qa",
     "qa manager",
     "head of qa",
+
     "только рф",
     "москва",
     "рф",
     "рб",
     "минск",
     "russia",
-    "casino",
+
     "backend engineer",
+    "backend developer",
+    "frontend developer",
+    "fullstack developer",
     ".net developer",
+    "python developer",
+    "java developer",
     "business analyst",
+    "ai product analyst",
+    "ai integrator",
+
     "aqa java",
     "automation java",
     "selenium java",
     "java test automation",
-    "ai product analyst",
-    "python developer",
+
     "1c",
-    "python",
-    "ai integrator",
-    "java",
+    "casino",
 ]
 
 DATA_KEYWORDS = [
-    # Data Analyst
+
     "data analyst",
-    "аналитик данных",
     "data analytics",
+    "data analysis",
+    "аналитик данных",
+    "дата аналитик",
+
     "product analyst",
+    "product analytics",
+
     "bi analyst",
     "business intelligence analyst",
+
     "sql analyst",
 
-    # Data Science
+    "#dataanalyst",
+    "#data_analyst",
+    "#dataanalytics",
+
     "data scientist",
     "data science",
+    "data scientist intern",
+    "data science intern",
     "датасаентист",
     "дата саентист",
 
-    # ML
-    "machine learning",
-    "ml engineer",
-    "machine learning engineer",
-    "mlops",
-    "ai engineer",
+    "#datascience",
+    "#data_science",
 
-    # DevOps
+    "machine learning",
+    "machine learning engineer",
+    "ml engineer",
+    "mlops",
+    "machine learning intern",
+
+    "#machinelearning",
+    "#machine_learning",
+    "#ml",
+    "#mlops",
+
+    "ai engineer",
+    "ai/ml engineer",
+    "ai ml engineer",
+
+    "#ai_ml",
+    "#aiml",
+
     "devops",
     "devops engineer",
     "site reliability engineer",
     "sre",
-    "platform engineer"
+
+    "#devops",
+    "#sre",
 ]
 
 DATA_EXCLUDE = [
-    # Уровень
-    "middle",
-    "mid",
+    
     "senior",
     "sr",
     "lead",
@@ -93,7 +128,6 @@ DATA_EXCLUDE = [
     "head",
     "manager",
 
-    # География
     "только рф",
     "москва",
     "рф",
@@ -101,19 +135,16 @@ DATA_EXCLUDE = [
     "минск",
     "russia",
 
-    # Неинтересные направления
     "backend engineer",
-    "frontend",
-    "fullstack",
+    "frontend developer",
+    "frontend engineer",
+    "fullstack developer",
     "java developer",
     "python developer",
     ".net developer",
-    "golang",
-    "php",
-    "1c",
-    "qa",
-    "test engineer",
-    "tester",
+    "golang developer",
+    "php developer",
+
     "casino"
 ]
 
