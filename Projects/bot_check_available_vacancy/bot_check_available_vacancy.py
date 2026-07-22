@@ -177,7 +177,8 @@ CHANNELS = [
     "@data_hr",
     "@vacancy_cs",
     "@qajobsoffers",
-    "@pythonrabota"
+    "@pythonrabota",
+    "@Relocated_job"
 ]
 
 def get_env_variables():
