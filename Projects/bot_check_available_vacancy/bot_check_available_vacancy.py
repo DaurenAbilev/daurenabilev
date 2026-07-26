@@ -1,6 +1,7 @@
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 from dotenv import load_dotenv
+from telethon.errors import ChatForwardsRestrictedError
 
 import asyncio
 import os
@@ -293,10 +294,30 @@ async def main():
                 print(f"[{message.id}] {text}")
 
                 if is_relevant_vacancy_qa(text):
-                    await client.forward_messages(TARGET_CHAT_QA, message)
+                    try: 
+                        await client.forward_messages(TARGET_CHAT_QA, message)
+                    except ChatForwardsRestrictedError: 
+                        await client.send_message(
+                            TARGET_CHAT_QA, 
+                            f"⚠️ Не удалось переслать сообщение.\n"
+                            f"ID сообщения: {message.id}\n"
+                            f"Источник: {channel}"
+                        )
+                        print(f"Нельзя отправить исходное сообщение {message.id}")
+                        print(f"{message}")
 
                 if is_relevant_vacancy_data(text):
-                    await client.forward_messages(TARGET_CHAT_DATA, message)
+                    try: 
+                        await client.forward_messages(TARGET_CHAT_DATA, message)
+                    except ChatForwardsRestrictedError:
+                        await client.send_message(
+                            TARGET_CHAT_DATA, 
+                            f"⚠️ Не удалось переслать сообщение.\n"
+                            f"ID сообщения: {message.id}\n"
+                            f"Источник: {channel}"
+                        )
+                        print(f"Нельзя отправить исходное сообщение {message.id}")
+                        print(f"{message}")
 
                 if message.id > max_id:
                     max_id = message.id
