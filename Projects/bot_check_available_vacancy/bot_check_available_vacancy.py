@@ -41,6 +41,7 @@ QA_EXCLUDE = [
     "рб",
     "минск",
     "russia",
+    "🇺🇦",
 
     "backend engineer",
     "backend developer",
@@ -146,7 +147,19 @@ DATA_EXCLUDE = [
     "golang developer",
     "php developer",
 
-    "casino"
+    "casino",
+
+    "forward deployed infrastructure engineer",
+    "google workspace / gcp migration engineer",
+    "инвестиционный аналитики",
+    "middle product analyst",
+    "artificial intelligence specialist",
+    "ai / genai engineer (llm & rag)",
+    "ai solution consultant",
+    "clinical ai specialist",
+    "🇺🇦"
+
+
 ]
 
 CHANNELS = [
@@ -157,9 +170,9 @@ CHANNELS = [
     "@revacancy",
     "@jobsearchIT",
     "@it_vakansii_jobs",
-    "@remotejun",
+    #"@remotejun",                  ### из чата нельзя пересылать сообщения
     "@qa_jobs_rabota",
-    "@Remoteit",
+    #"@Remoteit",                   ### из чата нельзя пересылать сообщения
     "@newdirections",
     "@refer_me_it",
     "@itvacancykz",
