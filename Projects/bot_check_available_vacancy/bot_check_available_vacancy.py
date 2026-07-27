@@ -61,6 +61,25 @@ QA_EXCLUDE = [
 
     "1c",
     "casino",
+
+    "fullstack technical lead",
+    "senior quality assurance engineer",
+    "middle crm analyst",
+    "customer success specialist",
+    "performance engineer",
+    "senior lead php",
+    "principal full stack engineer",
+    "lead ux designer",
+    "senior software engineer",
+    "senior ai engineer",
+    "ai engineer",
+    "bi analyst",
+    "senior ux/ui designer",
+    "ux/ui designer",
+    "ai process forward deployed engineer",
+    "mobile developer",
+    "senior flutter developer",
+    "mobile engineer",
 ]
 
 DATA_KEYWORDS = [
@@ -192,7 +211,10 @@ CHANNELS = [
     "@vacancy_cs",
     "@qajobsoffers",
     "@pythonrabota",
-    "@Relocated_job"
+    "@Relocated_job", 
+    "qajoboffer", 
+    "qajobsru", 
+    "rabotadlaqa"
 ]
 
 def get_env_variables():
