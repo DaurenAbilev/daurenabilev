@@ -104,6 +104,7 @@ def search_timeslots(client: httpx.Client, staff_id: int,
     }
     r = client.post(f"{BASE}/booking/search/timeslots", json=payload)
     r.raise_for_status()
+    log.debug("staff=%s date=%s -> %s", staff_id, date, r.text[:2000])
 
     slots = set()
     for item in r.json().get("data", []):
@@ -248,7 +249,9 @@ def main() -> int:
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO,
                         format="%(asctime)s %(levelname)s %(message)s",
                         datefmt="%H:%M:%S")
-    logging.getLogger("httpx").setLevel(logging.WARNING)
+    # С -v видно каждый запрос: подтверждение, что скрипт реально ходит в сеть
+    logging.getLogger("httpx").setLevel(
+        logging.INFO if args.verbose else logging.WARNING)
 
     target = f"{args.date}T{args.time}:00"
 

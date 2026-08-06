@@ -16,6 +16,10 @@ on:
         description: "Только искать, не бронировать"
         default: true
         type: boolean
+      verbose:
+        description: "Подробный лог: сколько слотов пришло и сколько свободно"
+        default: false
+        type: boolean
 
   # Каждый день в 06:20 по Астане (01:20 UTC, Астана = UTC+5).
   # Цель берётся из переменных репозитория TARGET_DATE и TARGET_TIME:
@@ -26,8 +30,8 @@ on:
     - cron: "20 1 * * *"
 
 env:
-  OPEN_AT: "07:00"       # во сколько открывается запись, время Астаны
-  DEADLINE: 900          # сколько секунд охотиться
+  OPEN_AT: "06:57"       # во сколько открывается запись, время Астаны
+  DEADLINE: 300          # сколько секунд охотиться
   PROJECT_DIR: Projects/daulet_tennis_reservation   # путь от корня репозитория
 
 jobs:
@@ -103,7 +107,8 @@ jobs:
             --time "${{ matrix.time }}" \
             ${{ needs.plan.outputs.start_at && format('--start-at "{0}"', needs.plan.outputs.start_at) || '' }} \
             --deadline "$DEADLINE" \
-            ${{ inputs.dry_run && '--dry-run' || '' }}
+            ${{ inputs.dry_run && '--dry-run' || '' }} \
+            ${{ inputs.verbose && '--verbose' || '' }}
 
       # В именах артефактов двоеточие запрещено: 13:00 -> 13-00
       - name: Имя артефакта
