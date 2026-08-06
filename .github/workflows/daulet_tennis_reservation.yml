@@ -1,0 +1,122 @@
+name: Забронировать корт
+
+on:
+  # Ручной запуск — охота начинается сразу.
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Дата игры (YYYY-MM-DD)"
+        required: true
+        type: string
+      time:
+        description: "Время игры. Несколько слотов — через запятую: 13:00,14:00"
+        required: true
+        type: string
+      dry_run:
+        description: "Только искать, не бронировать"
+        default: true
+        type: boolean
+
+  # Каждый день в 06:20 по Астане (01:20 UTC, Астана = UTC+5).
+  # Цель берётся из переменных репозитория TARGET_DATE и TARGET_TIME:
+  #   Settings -> Secrets and variables -> Actions -> Variables
+  # TARGET_TIME может содержать несколько слотов через запятую.
+  # Пусто или дата в прошлом — джоб выходит, ничего не делая.
+  schedule:
+    - cron: "20 1 * * *"
+
+env:
+  OPEN_AT: "07:00"       # во сколько открывается запись, время Астаны
+  DEADLINE: 900          # сколько секунд охотиться
+
+jobs:
+  # Лёгкий джоб: решает, бежать ли, и раскладывает времена в список.
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.plan.outputs.run }}
+      date: ${{ steps.plan.outputs.date }}
+      times: ${{ steps.plan.outputs.times }}
+      start_at: ${{ steps.plan.outputs.start_at }}
+    steps:
+      - name: Определить цель
+        id: plan
+        run: |
+          TODAY=$(TZ=Asia/Almaty date +%Y-%m-%d)
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            DATE="${{ inputs.date }}"
+            TIME="${{ inputs.time }}"
+            START_AT=""                       # вручную — охотимся сразу
+          else
+            DATE="${{ vars.TARGET_DATE }}"
+            TIME="${{ vars.TARGET_TIME }}"
+            START_AT="${TODAY}T${OPEN_AT}:00"
+
+            if [ -z "$DATE" ] || [ -z "$TIME" ]; then
+              echo "TARGET_DATE / TARGET_TIME не заданы — цели нет"
+              echo "run=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            if [[ "$DATE" < "$TODAY" ]]; then
+              echo "Цель $DATE уже в прошлом — пропускаем"
+              echo "run=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+
+          # "13:00, 14:00" -> ["13:00","14:00"] для strategy.matrix
+          TIMES=$(printf '%s' "$TIME" | jq -Rc 'split(",") | map(gsub("^\\s+|\\s+$"; ""))')
+
+          echo "Цель: $DATE $TIMES, старт охоты: ${START_AT:-сразу}"
+          echo "run=true"           >> "$GITHUB_OUTPUT"
+          echo "date=$DATE"         >> "$GITHUB_OUTPUT"
+          echo "times=$TIMES"       >> "$GITHUB_OUTPUT"
+          echo "start_at=$START_AT" >> "$GITHUB_OUTPUT"
+
+  # По одному параллельному джобу на каждый слот.
+  book:
+    needs: plan
+    if: needs.plan.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false          # неудача на одном слоте не отменяет второй
+      matrix:
+        time: ${{ fromJson(needs.plan.outputs.times) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install httpx
+
+      - name: Охота за слотом ${{ matrix.time }}
+        run: |
+          python daulet_tennis_reservation.py \
+            --date "${{ needs.plan.outputs.date }}" \
+            --time "${{ matrix.time }}" \
+            ${{ needs.plan.outputs.start_at && format('--start-at "{0}"', needs.plan.outputs.start_at) || '' }} \
+            --deadline "$DEADLINE" \
+            --log-file run.log \
+            ${{ inputs.dry_run && '--dry-run' || '' }}
+
+      # В именах артефактов двоеточие запрещено: 13:00 -> 13-00
+      - name: Имя артефакта
+        if: always()
+        id: label
+        run: echo "slot=${{ matrix.time }}" | tr ':' '-' >> "$GITHUB_OUTPUT"
+
+      - name: Сохранить лог и записи
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: booking-${{ needs.plan.outputs.date }}-${{ steps.label.outputs.slot }}
+          path: |
+            run.log
+            records.jsonl
+          if-no-files-found: ignore
+          retention-days: 30
