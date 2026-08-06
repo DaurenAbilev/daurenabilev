@@ -103,7 +103,6 @@ jobs:
             --time "${{ matrix.time }}" \
             ${{ needs.plan.outputs.start_at && format('--start-at "{0}"', needs.plan.outputs.start_at) || '' }} \
             --deadline "$DEADLINE" \
-            --log-file run.log \
             ${{ inputs.dry_run && '--dry-run' || '' }}
 
       # В именах артефактов двоеточие запрещено: 13:00 -> 13-00
@@ -117,8 +116,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: booking-${{ needs.plan.outputs.date }}-${{ steps.label.outputs.slot }}
-          path: |
-            ${{ env.PROJECT_DIR }}/run.log
-            ${{ env.PROJECT_DIR }}/records.jsonl
+          path: ${{ env.PROJECT_DIR }}/records.jsonl
           if-no-files-found: ignore
           retention-days: 30
