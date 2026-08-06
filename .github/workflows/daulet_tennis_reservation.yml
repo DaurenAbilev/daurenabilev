@@ -27,11 +27,12 @@ on:
   # TARGET_TIME может содержать несколько слотов через запятую.
   # Пусто или дата в прошлом — джоб выходит, ничего не делая.
   schedule:
-    - cron: "25 12 * * *" #20 1 * * *
+    - cron: "0 14 * * *" #20 1 * * *
 
 env:
   OPEN_AT: "06:57"       # во сколько открывается запись, время Астаны
   DEADLINE: 900          # сколько секунд охотиться
+  VERBOSE: "true"
   PROJECT_DIR: Projects/daulet_tennis_reservation   # путь от корня репозитория
 
 jobs:
@@ -108,7 +109,7 @@ jobs:
             ${{ needs.plan.outputs.start_at && format('--start-at "{0}"', needs.plan.outputs.start_at) || '' }} \
             --deadline "$DEADLINE" \
             ${{ inputs.dry_run && '--dry-run' || '' }} \
-            ${{ inputs.verbose && '--verbose' || '' }}
+            ${{ (inputs.verbose || env.VERBOSE == 'true') && '--verbose' || '' }}
 
       # В именах артефактов двоеточие запрещено: 13:00 -> 13-00
       - name: Имя артефакта
