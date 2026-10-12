@@ -2,3 +2,5 @@
 **/.env
 .DS_Store
 *.session
+# personal Telegram chat export — never commit
+ChatExport_*/
