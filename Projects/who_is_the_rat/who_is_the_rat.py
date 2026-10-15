@@ -24,8 +24,13 @@ def get_id_to_check(session, strong_id, count, max_id):
     except requests.exceptions.ReadTimeout:
         print(f"Read timeout count: {count} max_id: {max_id}")
         return None
-    except requests.exceptions.RequestException:
-        print(f"Request expetions count: {count} max_id: {max_id}")
+    except requests.exceptions.HTTPError as error:
+        # показываем реальную причину отказа: 401/403 - cookie/заголовки, 429 - лимит запросов
+        print(f"HTTP {error.response.status_code} count: {count} max_id: {max_id}")
+        print(f"Ответ: {error.response.text[:200]}")
+        return None
+    except requests.exceptions.RequestException as error:
+        print(f"Request exception count: {count} max_id: {max_id}: {type(error).__name__}: {error}")
         return None
     
     data = response.json()
@@ -100,6 +105,9 @@ def main():
         while has_more:
             
             data = get_id_to_check(session, user_id, 12, next_max_id)
+            if data is None:
+                print("Не удалось получить список подписок, остановка")
+                break
             next_max_id = data.get("next_max_id")
             has_more = data.get("has_more")
             
