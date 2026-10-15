@@ -1,7 +1,7 @@
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 from dotenv import load_dotenv
-from telethon.errors import ChatForwardsRestrictedError
+from telethon.errors import ChatForwardsRestrictedError, RPCError
 
 import asyncio
 import os
@@ -548,66 +548,80 @@ def is_relevant_vacancy_data(text):
     return True
 
 
+async def process_channel(client, channel, state):
+
+    initialized = await init_channel_if_needed(client, channel, state)
+
+    if initialized:
+        #await client.send_message(TARGET_CHAT_QA, f"{channel}: первый запуск, старые сообщения пропущены")
+        save_state(state)
+        return
+
+    last_message_id = state.get(channel, 0)
+    new_messages = await get_new_messages(client, channel, last_message_id)
+
+    if not new_messages:
+        print(f"{channel}: новых сообщений нет")
+        #await client.send_message(TARGET_CHAT, f"{channel}: новых сообщений нет")
+        return
+
+    print(f"{channel}: найдено {len(new_messages)} новых сообщений")
+
+    max_id = last_message_id
+
+    for message in new_messages:
+        text = (message.message or "").lower()
+        print(f"[{message.id}] {text}")
+
+        if is_relevant_vacancy_qa(text):
+            try: 
+                await client.forward_messages(TARGET_CHAT_QA, message)
+            except ChatForwardsRestrictedError: 
+                await client.send_message(
+                    TARGET_CHAT_QA, 
+                    f"⚠️ Не удалось переслать сообщение.\n"
+                    f"ID сообщения: {message.id}\n"
+                    f"Источник: {channel}"
+                )
+                print(f"Нельзя отправить исходное сообщение {message.id}")
+                print(f"{message}")
+
+        if is_relevant_vacancy_data(text):
+            try: 
+                await client.forward_messages(TARGET_CHAT_DATA, message)
+            except ChatForwardsRestrictedError:
+                await client.send_message(
+                    TARGET_CHAT_DATA, 
+                    f"⚠️ Не удалось переслать сообщение.\n"
+                    f"ID сообщения: {message.id}\n"
+                    f"Источник: {channel}"
+                )
+                print(f"Нельзя отправить исходное сообщение {message.id}")
+                print(f"{message}")
+
+        if message.id > max_id:
+            max_id = message.id
+
+    state[channel] = max_id
+    save_state(state)
+
+
 async def main():
 
     state = load_state()
+    failed_channels = []
 
     async with TelegramClient(StringSession(STRING_SESSION), API_ID, API_HASH) as client:
         for channel in CHANNELS:
+            try:
+                await process_channel(client, channel, state)
+            except (RPCError, ValueError, ConnectionError, asyncio.TimeoutError) as error:
+                # сбой Telegram (RpcCallFailError, "Request was unsuccessful N time(s)" и т.п.):
+                # пропускаем канал, state для него не обновился - сообщения подхватятся в след. прогоне
+                failed_channels.append(channel)
+                print(f"{channel}: ошибка {type(error).__name__}: {error}, канал пропущен")
 
-            initialized = await init_channel_if_needed(client, channel, state)
+    if failed_channels:
+        print(f"Каналов пропущено из-за ошибок: {len(failed_channels)}: {', '.join(failed_channels)}")
 
-            if initialized:
-                #await client.send_message(TARGET_CHAT_QA, f"{channel}: первый запуск, старые сообщения пропущены")
-                save_state(state)
-                continue
-            
-            last_message_id = state.get(channel, 0)
-            new_messages = await get_new_messages(client, channel, last_message_id)
-
-            if not new_messages:
-                print(f"{channel}: новых сообщений нет")
-                #await client.send_message(TARGET_CHAT, f"{channel}: новых сообщений нет")
-                continue
-
-            print(f"{channel}: найдено {len(new_messages)} новых сообщений")
-
-            max_id = last_message_id
-
-            for message in new_messages:
-                text = (message.message or "").lower()
-                print(f"[{message.id}] {text}")
-
-                if is_relevant_vacancy_qa(text):
-                    try: 
-                        await client.forward_messages(TARGET_CHAT_QA, message)
-                    except ChatForwardsRestrictedError: 
-                        await client.send_message(
-                            TARGET_CHAT_QA, 
-                            f"⚠️ Не удалось переслать сообщение.\n"
-                            f"ID сообщения: {message.id}\n"
-                            f"Источник: {channel}"
-                        )
-                        print(f"Нельзя отправить исходное сообщение {message.id}")
-                        print(f"{message}")
-
-                if is_relevant_vacancy_data(text):
-                    try: 
-                        await client.forward_messages(TARGET_CHAT_DATA, message)
-                    except ChatForwardsRestrictedError:
-                        await client.send_message(
-                            TARGET_CHAT_DATA, 
-                            f"⚠️ Не удалось переслать сообщение.\n"
-                            f"ID сообщения: {message.id}\n"
-                            f"Источник: {channel}"
-                        )
-                        print(f"Нельзя отправить исходное сообщение {message.id}")
-                        print(f"{message}")
-
-                if message.id > max_id:
-                    max_id = message.id
-
-            state[channel] = max_id
-            save_state(state)
-        
 asyncio.run(main())
